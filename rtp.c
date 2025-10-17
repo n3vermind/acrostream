@@ -32,10 +32,12 @@ int init_rtp(config *cfg, rtp_connection *conn) {
   }
 
   conn->seq = 0x2137;
+  conn->param_sent = 0;
   return 0;
 }
 
 int send_rtp(config *cfg, rtp_connection *conn, mi_venc_stream *stream) {
+
   for (u_int32_t i=0; i<stream->count; i++) {
 
     u_int8_t *start, *end;
@@ -68,7 +70,15 @@ int send_single_nalu(config *cfg, rtp_connection *conn, u_int8_t *start, u_int8_
   u_int32_t len = end-start;
 
   mi_venc_nalu type = start[0] >> 1 & 0x3F;
-  printf("sending the NALU type of %d, len %d\n", type, len);
+
+  if (type >= E_MI_VENC_H265_NALU_VPS && type <= E_MI_VENC_H265_NALU_PPS) {
+    if (conn->param_sent & (1 << type)) {
+      return 0;
+    }
+    conn->param_sent |= (1 << type);
+  }
+
+  printf("Sending NALU %d, len %d\n", type, len);
 
   if (len < cfg->max_packet_size) {
     set_header((rtp_header*)buf, conn->seq++, marker);

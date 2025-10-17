@@ -20,6 +20,7 @@ typedef struct {
 typedef struct {
   int fd;
   u_int32_t seq;
+  u_int64_t param_sent;
 } rtp_connection;
 
 int init_rtp(config *cfg, rtp_connection *conn);
