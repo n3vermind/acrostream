@@ -27,7 +27,7 @@ int setup_pipeline(config *cfg, mi_lib *lib, u_int32_t *venc_fd) {
   }
 
   if (lib->mi_snr.set_plane_mode(SENSOR_PAD, 0)) {
-    error("failed to set resolution");
+    error("failed to set plane mode");
     return -1;
   }
 
