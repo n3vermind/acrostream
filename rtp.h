@@ -23,7 +23,16 @@ typedef struct {
   u_int64_t param_sent;
 } rtp_connection;
 
+typedef struct {
+  u_int8_t *start;
+  u_int8_t *end;
+} slice;
+
+
 int init_rtp(config *cfg, rtp_connection *conn);
 int send_rtp(config *cfg, rtp_connection *conn, mi_venc_stream *stream);
-int send_single_nalu(config *cfg, rtp_connection *conn, u_int8_t *start, u_int8_t *end, u_int8_t marker);
+int flush_nalu(config *cfg, rtp_connection *conn, slice *nalu, int nalu_len, u_int8_t marker);
+int send_single_nalu(config *cfg, rtp_connection *conn, slice *nalu, u_int8_t marker);
+int send_fragmented_nalu(config *cfg, rtp_connection *conn, slice *nalu, u_int8_t marker);
+int send_aggregated_nalu(config *cfg, rtp_connection *conn, slice *nalu, int nalu_len, u_int8_t marker);
 void set_header(rtp_header *hdr, u_int32_t seq, u_int8_t marker);
